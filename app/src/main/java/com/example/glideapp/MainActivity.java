@@ -14,7 +14,65 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+
+    private class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapter.MyViewHolder>  {
+
+        @Override
+        public ImageGalleryAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            Context context = parent.getContext();
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View photoView = inflater.inflate(R.layout.item_photo, parent, false);
+            ImageGalleryAdapter.MyViewHolder viewHolder = new ImageGalleryAdapter.MyViewHolder(photoView);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(ImageGalleryAdapter.MyViewHolder holder, int position) {
+
+            SpacePhoto spacePhoto = mSpacePhotos[position];
+            ImageView imageView = holder.mPhotoImageView;
+        }
+
+        @Override
+        public int getItemCount() {
+            return (mSpacePhotos.length);
+        }
+
+        public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            public ImageView mPhotoImageView;
+
+            public MyViewHolder(View itemView) {
+
+                super(itemView);
+                mPhotoImageView = (ImageView) itemView.findViewById(R.id.iv_photo);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+
+                int position = getAdapterPosition();
+                if(position != RecyclerView.NO_POSITION) {
+                    SpacePhoto spacePhoto = mSpacePhotos[position];
+                    Intent intent = new Intent(mContext, SpacePhotoActivity.class);
+                    intent.putExtra(SpacePhotoActivity.EXTRA_SPACE_PHOTO, spacePhoto);
+                    startActivity(intent);
+                }
+            }
+        }
+
+        private SpacePhoto[] mSpacePhotos;
+        private Context mContext;
+
+        public ImageGalleryAdapter(Context context, SpacePhoto[] spacePhotos) {
+            mContext = context;
+            mSpacePhotos = spacePhotos;
+        }
+    }
 }
+
 
 class SpacePhoto implements Parcelable {
 
@@ -81,4 +139,6 @@ class SpacePhoto implements Parcelable {
         parcel.writeString(mUrl);
         parcel.writeString(mTitle);
     }
+
+
 }
